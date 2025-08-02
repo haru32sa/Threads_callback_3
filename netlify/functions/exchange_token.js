@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 exports.handler = async (event) => {
   const client_id = process.env.CLIENT_ID;
   const client_secret = process.env.CLIENT_SECRET;
-  const redirect_uri_for_threads_api = 'https://gregarious-selkie-d66d75.netlify.app/callback.html'; 
+  const redirect_uri_for_threads_api = 'https://sweet-smakager-0ffa4c.netlify.app/callback.html'; 
   const log_function_url = process.env.LOG_FUNCTION_URL;
 
   let code;
