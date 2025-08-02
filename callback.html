@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>認証処理を完了中です…</title>
+</head>
+<body>
+  <p>このまま閉じずにお待ちください。</p>
+  <pre id="result">⏳ 認証コード送信中...</pre>
+
+  <script>
+    async function sendCode() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const result = document.getElementById("result");
+
+      if (!code) {
+        result.textContent = "❌ 認証コード（code）が取得できませんでした。URLにcodeパラメータがあるか確認してください。";
+        console.error("認証コードがURLから取得できませんでした。現在のURL:", window.location.href);
+        return;
+      }
+
+      result.textContent = "✅ トークン取得処理中…";
+
+      try {
+        // ★修正箇所: fetch URLを相対パスに変更
+        const res = await fetch("/.netlify/functions/exchange_token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          result.textContent = "✅ トークン取得と保存が完了しました！\n" + JSON.stringify(data, null, 2);
+          console.log("トークン取得成功:", data);
+        } else {
+          result.textContent = "❌ エラーが発生しました。\n" + JSON.stringify(data, null, 2);
+          console.error("トークン取得エラー:", data);
+        }
+      } catch (error) {
+        result.textContent = "❌ ネットワークエラーまたはサーバー応答エラーです。\n" + error.message;
+        console.error("fetchエラー:", error);
+      }
+    }
+
+    // ★修正箇所: DOMContentLoadedを待ってからsendCode()を呼び出す
+    document.addEventListener('DOMContentLoaded', sendCode);
+  </script>
+</body>
+</html>
